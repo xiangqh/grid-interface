@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Space, Form, Input, Row, Col, Divider, Card, Breadcrumb } from 'antd';
-import { BrowserRouter, HashRouter, Routes, Router, Route, useParams } from 'react-router-dom'
+import { BrowserRouter, HashRouter, Routes, Router, Route, Switch, useParams } from 'react-router-dom'
 import axios from 'axios';
 import cookie from 'react-cookies';
 import Grid from './Grid.js';
@@ -11,12 +11,11 @@ axios.defaults.withCredentials = true;
 function App() {
   return (
     <div className="App">
-        <BrowserRouter>
           <Routes>
             <Route index path="/" element={<Home />} />
-            <Route path="/:token" element={<Home />} />
+            <Route exact path="/interface/:token" element={<Home />} />
+            <Route exact path="/:token" element={<Home />} />
           </Routes>
-        </BrowserRouter>
     </div>
   )
 }
