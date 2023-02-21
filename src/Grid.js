@@ -125,7 +125,7 @@ export default function Grid({ gridType, grid, position, orders }) {
                             </Col>
                             <Col span={8}>
                                 <Button disabled={position?.size == 0} type="primary" onClick={()=>{
-                                    axios.post(`${process.env.REACT_APP_BASE_PATH}/futures/closing/${grid.contract}`,{
+                                    axios.post(`${process.env.REACT_APP_BASE_PATH}/futures/closing/${grid.contract}?autoSize=0`, null,{
                                         headers: { sessionID: cookie.load("sessionID") }
                                     }).then(function (response) {
                                         console.log(response);
