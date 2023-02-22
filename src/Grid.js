@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Space, Form, Input, Row, Col, Divider, Card, InputNumber, List, message } from 'antd';
+import { CloseSquareOutlined } from '@ant-design/icons';
 import axios from 'axios';
 import cookie from 'react-cookies';
 import moment from 'moment';
@@ -34,8 +35,8 @@ export default function Grid({ gridType, grid, position, orders }) {
                         {grid?.status}
                     </Col>
                     <Col span={18}>
-                        <Space size={8} style={{float:'right'}}>
-                            <Button disabled={!grid||grid?.status=='STOPED'}  type="primary" onClick={() => {
+                        <Space size={8} style={{ float: 'right' }}>
+                            <Button disabled={!grid || grid?.status == 'STOPED'} type="primary" onClick={() => {
                                 grid.topPrice = topPrice;
                                 grid.buyPrice = buyPrice;
                                 grid.closePrice = closePrice;
@@ -163,17 +164,17 @@ export default function Grid({ gridType, grid, position, orders }) {
                         <List
                             header={<div>
                                 <Row>
-                                    <Col span={6}><span>订单 ID</span>
+                                    <Col span={8}><span>订单 ID</span>
                                     </Col>
                                     <Col span={4}><span>价格</span>
                                     </Col>
-                                    <Col span={4}>
+                                    <Col span={2}>
                                         <span>交易数量</span>
                                     </Col>
-                                    <Col span={4}>
+                                    <Col span={2}>
                                         <span>未成交数量</span>
                                     </Col>
-                                    <Col span={6}>
+                                    <Col span={8}>
                                         <span>订单创建时间</span>
                                     </Col>
 
@@ -184,19 +185,37 @@ export default function Grid({ gridType, grid, position, orders }) {
                             renderItem={(item) => (
                                 <List.Item>
                                     <Row gutter={[16, 16]} style={{ width: '100%' }}>
-                                        <Col span={6}>
-                                            <div>{item.id}</div>
+                                        <Col span={8}>
+                                            <div>
+                                                <a onClick={() => {
+                                                    message.warning({
+                                                        content: "确定",
+                                                        duration: 3,
+                                                        onClick: () => {
+                                                            message.destroy();
+                                                            axios.post(`${process.env.REACT_APP_BASE_PATH}/futures/cancelOrder/${item.id}`, null, {
+                                                                headers: { sessionID: cookie.load("sessionID") }
+                                                            }).then(function (response) {
+                                                                message.info("SUCCESS");
+                                                                window.location.reload();
+                                                            }).catch(function (error) {
+                                                                console.log(error);
+                                                            });
+                                                        }
+                                                    })
+                                                }}>{item.id}<CloseSquareOutlined /></a>
+                                            </div>
                                         </Col>
                                         <Col span={4}>
                                             <div>{item.price}</div>
                                         </Col>
-                                        <Col span={4}>
+                                        <Col span={2}>
                                             <div>{item.size}</div>
                                         </Col>
-                                        <Col span={4}>
+                                        <Col span={2}>
                                             <div>{item.left}</div>
                                         </Col>
-                                        <Col span={6}>
+                                        <Col span={8}>
                                             <div>{moment.unix(item.createTime).format().slice(0, 19)}</div>
                                         </Col>
                                     </Row>
