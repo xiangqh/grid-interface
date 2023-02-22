@@ -115,7 +115,7 @@ export default function Login() {
                             const _key = toHexString(chacha20(plaintextKey, ckey));
                             const _secret = toHexString(chacha20(plaintextSecret, ckey));
 
-                            axios.post(`${process.env.REACT_APP_BASE_PATH}/futures/signup`, {
+                            axios.post(`${process.env.REACT_APP_BASE_PATH}/accounts/signup`, {
                                 username: username,
                                 password: password,
                                 key: _key,
@@ -133,7 +133,7 @@ export default function Login() {
                             })
 
                         } else {
-                            axios.post(`${process.env.REACT_APP_BASE_PATH}/futures/login`, {
+                            axios.post(`${process.env.REACT_APP_BASE_PATH}/accounts/login`, {
                                 username: username,
                                 password: password,
                             }).then(response => {

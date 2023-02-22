@@ -5,7 +5,6 @@ import cookie from 'react-cookies';
 import moment from 'moment';
 
 export default function Grid({ gridType, grid, position, orders }) {
-    console.log(position);
     const [topPrice, setTopPrice] = useState(0);
     const [buyPrice, setBuyPrice] = useState(0);
     const [closePrice, setClosePrice] = useState(0);
@@ -25,14 +24,51 @@ export default function Grid({ gridType, grid, position, orders }) {
 
     return (
         <Card
-            headStyle={{ backgroundColor: gridType == 'long' ? "red" : "green" }}
+            // headStyle={{ backgroundColor: gridType == 'long' ? "red" : "green" }}
             title={
-                <Row>
-                    <Col span={4} >
-                        {gridType == 'long' ? "多" : "空"} {grid?.status}
+                <Row style={{}}>
+                    <Col span={2} style={{ color: gridType == 'long' ? "red" : "green" }} >
+                        {gridType == 'long' ? "开多" : "开空"}
                     </Col>
-                    <Col span={12}>
+                    <Col span={4}>
+                        {grid?.status}
+                    </Col>
+                    <Col span={18}>
+                        <Space size={8} style={{float:'right'}}>
+                            <Button disabled={!grid||grid?.status=='STOPED'}  type="primary" onClick={() => {
+                                grid.topPrice = topPrice;
+                                grid.buyPrice = buyPrice;
+                                grid.closePrice = closePrice;
+                                grid.gridNum = gridNum;
+                                grid.totalSize = totalSize;
+                                grid.status = "STOPED";
+                                axios.post(`${process.env.REACT_APP_BASE_PATH}/futures/saveGrid`, grid, {
+                                    headers: { sessionID: cookie.load("sessionID") }
+                                }).then(function (response) {
+                                    console.log(response);
+                                    message.info("SUCCESS");
+                                }).catch(function (error) {
+                                    console.log(error);
+                                });
+                            }}>停止</Button>
 
+                            <Button type="primary" onClick={() => {
+                                grid.topPrice = topPrice;
+                                grid.buyPrice = buyPrice;
+                                grid.closePrice = closePrice;
+                                grid.gridNum = gridNum;
+                                grid.totalSize = totalSize;
+                                grid.status = 'COMPLETED';
+                                axios.post(`${process.env.REACT_APP_BASE_PATH}/futures/saveGrid`, grid, {
+                                    headers: { sessionID: cookie.load("sessionID") }
+                                }).then(function (response) {
+                                    console.log(response);
+                                    message.info("SUCCESS");
+                                }).catch(function (error) {
+                                    console.log(error);
+                                });
+                            }}>保存</Button>
+                        </Space>
                     </Col>
                 </Row>
             } size="small">
@@ -63,7 +99,6 @@ export default function Grid({ gridType, grid, position, orders }) {
                     <Col span={8}>
                         <Form.Item
                             label="close price"
-                            // style={{ width: '30%' }}
                             rules={[{ required: true, message: 'Please input your close price!' }]}
                         >
                             <InputNumber style={{ width: '100% ' }} value={closePrice} step="0.05" onChange={(value) => {
@@ -72,11 +107,10 @@ export default function Grid({ gridType, grid, position, orders }) {
                         </Form.Item>
                     </Col>
                 </Row>
-                <Row align='middle'>
+                <Row align='middle' gutter={16}>
                     <Col span={8}>
                         <Form.Item
                             label="size"
-                            // style={{ width: 160 }}
                             rules={[{ required: true, message: 'Please input your size!' }]}
                         >
                             <InputNumber style={{ width: '100%' }} value={totalSize} onChange={(value) => {
@@ -87,7 +121,6 @@ export default function Grid({ gridType, grid, position, orders }) {
                     <Col span={8}>
                         <Form.Item
                             label="grid num"
-                            // style={{ width: 160 }}
                             rules={[{ required: true, message: 'Please input your grid num!' }]}
                         >
                             <InputNumber style={{ width: '100%' }} value={gridNum} onChange={(value) => {
@@ -96,23 +129,12 @@ export default function Grid({ gridType, grid, position, orders }) {
                         </Form.Item>
                     </Col>
                     <Col span={8} style={{ textAlign: 'right' }} >
-                        <Button type="primary" onClick={() => {
-                            grid.userId = 1;
-                            grid.topPrice = topPrice;
-                            grid.buyPrice = buyPrice;
-                            grid.closePrice = closePrice;
-                            grid.gridNum = gridNum;
-                            grid.totalSize = totalSize;
-                            axios.post(`${process.env.REACT_APP_BASE_PATH}/futures/saveGrid`, grid, {
-                                headers: { sessionID: cookie.load("sessionID") }
-                            }).then(function (response) {
-                                console.log(response);
-                                message.info("SUCCESS");
-                            })
-                                .catch(function (error) {
-                                    console.log(error);
-                                });
-                        }}>保存</Button>
+                        <Form.Item>
+                            <div>
+
+                            </div>
+                        </Form.Item>
+
                     </Col>
                 </Row>
                 <Divider />
@@ -124,8 +146,8 @@ export default function Grid({ gridType, grid, position, orders }) {
                             <Col span={8}>
                             </Col>
                             <Col span={8}>
-                                <Button disabled={position?.size == 0} type="primary" onClick={()=>{
-                                    axios.post(`${process.env.REACT_APP_BASE_PATH}/futures/closing/${grid.contract}?autoSize=0`, null,{
+                                <Button disabled={position?.size == 0} type="primary" onClick={() => {
+                                    axios.post(`${process.env.REACT_APP_BASE_PATH}/futures/closing/${grid.contract}?autoSize=0`, null, {
                                         headers: { sessionID: cookie.load("sessionID") }
                                     }).then(function (response) {
                                         console.log(response);

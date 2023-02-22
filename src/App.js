@@ -98,19 +98,9 @@ function Home() {
   useEffect(() => {
     init();
     fetchDate("grids", contractName, function (response) {
-      if (response.data.length > 0) {
-        if (response.data[0].topPrice > response.data[0].buyPrice) {
-          setLongGrid(response.data[0]);
-        } else {
-          setShortGrid(response.data[0]);
-        }
-        if (response.data.length > 1) {
-          if (response.data[1].topPrice > response.data[1].buyPrice) {
-            setLongGrid(response.data[0]);
-          } else {
-            setShortGrid(response.data[0]);
-          }
-        }
+      console.log(response.data)
+      if(response.data[0] != null) {
+        setLongGrid(response.data[0]);
       } else {
         setLongGrid({
           contract: contractName,
@@ -121,6 +111,11 @@ function Home() {
           totalSize: 0,
           gridNum: 0,
         });
+      }
+
+      if(response.data[1]!= null) {
+        setShortGrid(response.data[1]);
+      } else {
         setShortGrid({
           contract: contractName,
           topPrice: 0,
@@ -134,7 +129,9 @@ function Home() {
     });
 
     const timer = setInterval(() => {
-      init();
+      if(session) {
+        init();
+      }
     }, 5000);
 
     return () => {
@@ -147,7 +144,7 @@ function Home() {
     <div style={{ marginTop: 20 }}>
       <Breadcrumb style={{ float: 'right', marginRight: 100 }}>
         <Breadcrumb.Item onClick={() => {
-          axios.post(`${process.env.REACT_APP_BASE_PATH}/futures/logout`, {
+          axios.post(`${process.env.REACT_APP_BASE_PATH}/accounts/logout`,null, {
             headers: { sessionID: session }
           }).then(function (response) {
             if (response.data.code == 200) {
@@ -178,10 +175,10 @@ function Home() {
                 <div>{contract?.orderPriceRound}</div>
               </Col>
             </Row>
-            <div>
+            <Space direction="vertical" size="middle" style={{ display: 'flex' }}>
               <Grid gridType="long" grid={longGrid} position={long} orders={longOrders} />
-              {/* <Grid gridType="short" grid={shortGrid} position={short} orders={shortOrders} /> */}
-            </div>
+              <Grid gridType="short" grid={shortGrid} position={short} orders={shortOrders} />
+            </Space>
           </Space> : <Login />
       }
     </div>
