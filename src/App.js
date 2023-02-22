@@ -52,12 +52,13 @@ function Home() {
   }
 
   const init = () => {
-    fetchDate("getContract", contractName, function (response) {
-      setContract(response.data);
-    });
+    
 
     const sessionID = cookie.load("sessionID");
     if (sessionID) {
+      fetchDate("getContract", contractName, function (response) {
+        setContract(response.data);
+      });
       fetchDate("openOrders", contractName, function (response) {
         let _longOrders = [];
         let _shortOrders = [];
@@ -129,7 +130,7 @@ function Home() {
     });
 
     const timer = setInterval(() => {
-      if(session) {
+      if(cookie.load("sessionID")) {
         init();
       }
     }, 5000);
@@ -167,8 +168,8 @@ function Home() {
                 <div>{contract?.name}</div>
               </Col>
               <Col span={8}>
-                <div>指数价格</div>
-                <div>{contract?.indexPrice}</div>
+                <div>最后成交价格</div>
+                <div>{contract?.lastPrice}</div>
               </Col>
               <Col span={8}>
                 <div>委托价格最小单位</div>
