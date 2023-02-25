@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Space, Form, Input, Row, Col, Divider, Card, InputNumber, List, message } from 'antd';
+import { Button, Space, Form, Slider, Row, Col, Divider, Card, InputNumber, List, message } from 'antd';
 import { CloseSquareOutlined } from '@ant-design/icons';
+// import type { SliderMarks } from 'antd/es/slider';
 import axios from 'axios';
 import cookie from 'react-cookies';
 import moment from 'moment';
@@ -12,6 +13,7 @@ export default function Grid({ gridType, grid, position, orders }) {
     const [totalSize, setTotalSize] = useState(0);
     const [gridNum, setGridNum] = useState(0);
 
+    const [marks, setMarks] = useState({});
 
     useEffect(() => {
         if (grid) {
@@ -20,6 +22,30 @@ export default function Grid({ gridType, grid, position, orders }) {
             setClosePrice(grid.closePrice);
             setTotalSize(grid.totalSize);
             setGridNum(grid.gridNum);
+
+            const marks = {};
+            const values = [0];
+            if(grid) {
+                const span = 80 / grid.gridNum;
+                const spanPrice = (grid.topPrice - grid.buyPrice) / grid.gridNum;
+                for (var i = 0; i <= grid.gridNum; i++) {
+                    marks[span * i] = {
+                        style: {
+                            // color: '#f50',
+
+                        },
+                        label: grid.topPrice - spanPrice * i
+                    };
+                }
+                marks[100] =  {
+                    style: {
+                        color: '#f50',
+                    },
+                    label: <strong>{grid.closePrice}</strong>,
+                };
+                values[1] = 10;
+                setMarks(marks);
+            }
         }
     }, [grid]);
 
@@ -142,11 +168,16 @@ export default function Grid({ gridType, grid, position, orders }) {
                 <div>
                     <Space direction="vertical" size="middle" style={{ display: 'flex' }}>
                         <Row>
-                            <Col span={8}><span >合约仓位:</span><span> {position?.size}</span>
+                            {/* <Col span={8}><span >合约仓位:</span><span> {position?.size}</span>
+                            </Col> */}
+                            <Col span={16}>
+                                <div>
+                                <span>仓位:</span><span> {position?.size}</span>
+                                <Slider range marks={marks} value={[0, position?.size * 80 / grid?.totalSize]} />
+                                </div>
+                                
                             </Col>
-                            <Col span={8}>
-                            </Col>
-                            <Col span={8}>
+                            <Col span={8} style={{ textAlign: 'right' }}>
                                 <Button disabled={position?.size == 0} type="primary" onClick={() => {
                                     axios.post(`${process.env.REACT_APP_BASE_PATH}/futures/closing/${grid.contract}?autoSize=0`, null, {
                                         headers: { sessionID: cookie.load("sessionID") }

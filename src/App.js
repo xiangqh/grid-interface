@@ -99,7 +99,6 @@ function Home() {
   useEffect(() => {
     init();
     fetchDate("grids", contractName, function (response) {
-      console.log(response.data)
       if (response.data[0] != null) {
         setLongGrid(response.data[0]);
       } else {
@@ -143,48 +142,51 @@ function Home() {
 
   return (
     <div style={{ marginTop: 20 }}>
-      <Space direction="vertical" style={{ display: 'flex' }}>
-        <Breadcrumb style={{ float: 'right', marginRight: 100 }}>
-          <Breadcrumb.Item onClick={() => {
-            axios.post(`${process.env.REACT_APP_BASE_PATH}/accounts/logout`, null, {
-              headers: { sessionID: session }
-            }).then(function (response) {
-              if (response.data.code == 200) {
-                cookie.remove("sessionID");
-                setSession(null);
-              }
-            }).catch(function (error) {
 
-            });
-          }}>Logout</Breadcrumb.Item>
-
-        </Breadcrumb>
-        <Affix style={{}}>
-          <div style={{ paddingTop: 10,  backgroundColor: "#FFFFFF" }}>
-            <Row  style={{marginInline: 20,}}>
-              <Col span={8}>
-                <div>合约</div>
-                <div>{contract?.name}</div>
-              </Col>
-              <Col span={8}>
-                <div>最后成交价格</div>
-                <div>{contract?.lastPrice}</div>
-              </Col>
-              <Col span={8}>
-                <div>委托价格最小单位</div>
-                <div>{contract?.orderPriceRound}</div>
-              </Col>
-            </Row>
-            <Divider />
-          </div>
-        </Affix>
-      </Space>
       {
         session ?
-          <Space direction="vertical" size="middle" style={{ display: 'flex', marginInline: 20, }}>
-            <Grid gridType="long" grid={longGrid} position={long} orders={longOrders} />
-            <Grid gridType="short" grid={shortGrid} position={short} orders={shortOrders} />
-          </Space> : <Login />
+          <div>
+            <Space direction="vertical" style={{ display: 'flex' }}>
+              <Breadcrumb style={{ float: 'right', marginRight: 100 }}>
+                <Breadcrumb.Item onClick={() => {
+                  axios.post(`${process.env.REACT_APP_BASE_PATH}/accounts/logout`, null, {
+                    headers: { sessionID: session }
+                  }).then(function (response) {
+                    if (response.data.code == 200) {
+                      cookie.remove("sessionID");
+                      setSession(null);
+                    }
+                  }).catch(function (error) {
+
+                  });
+                }}>Logout</Breadcrumb.Item>
+
+              </Breadcrumb>
+              <Affix style={{}}>
+                <div style={{ paddingTop: 10, backgroundColor: "#FFFFFF" }}>
+                  <Row style={{ marginInline: 20, }}>
+                    <Col span={8}>
+                      <div>合约</div>
+                      <div>{contract?.name}</div>
+                    </Col>
+                    <Col span={8}>
+                      <div>最后成交价格</div>
+                      <div>{contract?.lastPrice}</div>
+                    </Col>
+                    <Col span={8}>
+                      <div>委托价格最小单位</div>
+                      <div>{contract?.orderPriceRound}</div>
+                    </Col>
+                  </Row>
+                  <Divider />
+                </div>
+              </Affix>
+            </Space>
+            <Space direction="vertical" size="middle" style={{ display: 'flex', marginInline: 20, }}>
+              <Grid gridType="long" grid={longGrid} position={long} orders={longOrders} />
+              <Grid gridType="short" grid={shortGrid} position={short} orders={shortOrders} />
+            </Space>
+          </div> : <Login />
       }
     </div>
   );
