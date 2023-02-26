@@ -186,9 +186,8 @@ function Home() {
                         </a>
                       </Dropdown>
                     </Col>
-                    <Col span={12}>
-                      <Breadcrumb style={{ float: 'right', marginRight: 100 }}>
-                        <Breadcrumb.Item onClick={() => {
+                    <Col span={12} style={{ textAlign: 'right' }}>
+                      <Button  onClick={() => {
                           axios.post(`${process.env.REACT_APP_BASE_PATH}/accounts/logout`, null, {
                             headers: { sessionID: session }
                           }).then(function (response) {
@@ -200,9 +199,9 @@ function Home() {
                           }).catch(function (error) {
 
                           });
-                        }}>Logout</Breadcrumb.Item>
-
-                      </Breadcrumb>
+                        }}>
+                        Logout
+                      </Button>
                     </Col>
                   </Row>
                   <Row style={{ marginInline: 20, }}>
