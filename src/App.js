@@ -61,7 +61,6 @@ function Home() {
     fetchDate("openOrders", contractName, function (response) {
       let _longOrders = [];
       let _shortOrders = [];
-      // if (response.data.is)
       if (response.data instanceof Array) {
         let list = response.data.sort((a, b) => {
           return b.createTime - a.createTime;
@@ -144,7 +143,9 @@ function Home() {
   const items = [{
     key: '1',
     label: (
-      <a target="_blank" rel="noopener noreferrer" href="./BTC">
+      <a onClick={()=>{
+        window.location.href = "./BTC";
+      }}>
         BTC
       </a>
     )
@@ -152,7 +153,9 @@ function Home() {
   {
     key: '2',
     label: (
-      <a target="_blank" rel="noopener noreferrer" href="./ETH">
+      <a onClick={()=>{
+        window.location.href = "./ETH";
+      }}>
         ETH
       </a>
     )
@@ -161,7 +164,6 @@ function Home() {
 
   return (
     <div style={{ marginTop: 20, height: '100%' }}>
-
       {
         session ?
           <div>
@@ -173,7 +175,7 @@ function Home() {
                       <Dropdown menu={{ items }}>
                         <a onClick={(e) => e.preventDefault()}>
                           <Space>
-                            Cascading
+                            切换
                             <DownOutlined />
                           </Space>
                         </a>
