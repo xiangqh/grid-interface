@@ -144,7 +144,7 @@ function Home() {
     key: '1',
     label: (
       <a onClick={()=>{
-        window.location.href = "./BTC";
+        window.location.href = "./#/BTC";
       }}>
         BTC
       </a>
@@ -154,7 +154,7 @@ function Home() {
     key: '2',
     label: (
       <a onClick={()=>{
-        window.location.href = "./ETH";
+        window.location.href = "./#/ETH";
       }}>
         ETH
       </a>
