@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Affix, Button, Space, Form, Input, Row, Col, Divider, Card, Breadcrumb } from 'antd';
+import { Affix, Button, Space, Typography, Row, Col, Divider, Dropdown, Breadcrumb } from 'antd';
 import { BrowserRouter, HashRouter, Routes, Router, Route, Switch, useParams } from 'react-router-dom'
+import { DownOutlined } from '@ant-design/icons';
 import axios from 'axios';
-import cookie from 'react-cookies';
+// import cookie from 'react-cookies';
 import Grid from './Grid.js';
 import Login from './Login.js';
 
@@ -34,7 +35,7 @@ function Home() {
   const [longOrders, setLongOrders] = useState(null);
   const [shortOrders, setShortOrders] = useState(null);
 
-  const [session, setSession] = useState(cookie.load("sessionID"));
+  const [session, setSession] = useState(localStorage.getItem('sessionID'));
 
   const contractName = params.token ? `${params.token}_USDT` : "BTC_USDT";
 
@@ -45,7 +46,8 @@ function Home() {
       callback(response);
     }).catch(function (error) {
       if (error.response && error.response.status == 403) {
-        cookie.remove("sessionID");
+        // cookie.remove("sessionID");
+        localStorage.removeItem("sessionID");
         setSession(null);
       }
     });
@@ -129,7 +131,7 @@ function Home() {
     });
 
     const timer = setInterval(() => {
-      if (cookie.load("sessionID")) {
+      if (session) {
         init();
       }
     }, 5000);
@@ -139,31 +141,63 @@ function Home() {
     };
   }, []);
 
+  const items = [{
+    key: '1',
+    label: (
+      <a target="_blank" rel="noopener noreferrer" href="./BTC">
+        BTC
+      </a>
+    )
+  },
+  {
+    key: '2',
+    label: (
+      <a target="_blank" rel="noopener noreferrer" href="./ETH">
+        ETH
+      </a>
+    )
+  },];
+
 
   return (
-    <div style={{ marginTop: 20 }}>
+    <div style={{ marginTop: 20, height: '100%' }}>
 
       {
         session ?
           <div>
             <Space direction="vertical" style={{ display: 'flex' }}>
-              <Breadcrumb style={{ float: 'right', marginRight: 100 }}>
-                <Breadcrumb.Item onClick={() => {
-                  axios.post(`${process.env.REACT_APP_BASE_PATH}/accounts/logout`, null, {
-                    headers: { sessionID: session }
-                  }).then(function (response) {
-                    if (response.data.code == 200) {
-                      cookie.remove("sessionID");
-                      setSession(null);
-                    }
-                  }).catch(function (error) {
-
-                  });
-                }}>Logout</Breadcrumb.Item>
-
-              </Breadcrumb>
               <Affix style={{}}>
                 <div style={{ paddingTop: 10, backgroundColor: "#FFFFFF" }}>
+                  <Row style={{ marginInline: 20 }}>
+                    <Col span={12} style={{ marginBottom: 20 }}>
+                      <Dropdown menu={{ items }}>
+                        <a onClick={(e) => e.preventDefault()}>
+                          <Space>
+                            Cascading
+                            <DownOutlined />
+                          </Space>
+                        </a>
+                      </Dropdown>
+                    </Col>
+                    <Col span={12}>
+                      <Breadcrumb style={{ float: 'right', marginRight: 100 }}>
+                        <Breadcrumb.Item onClick={() => {
+                          axios.post(`${process.env.REACT_APP_BASE_PATH}/accounts/logout`, null, {
+                            headers: { sessionID: session }
+                          }).then(function (response) {
+                            if (response.data.code == 200) {
+                              // cookie.remove("sessionID");
+                              localStorage.removeItem("sessionID");
+                              setSession(null);
+                            }
+                          }).catch(function (error) {
+
+                          });
+                        }}>Logout</Breadcrumb.Item>
+
+                      </Breadcrumb>
+                    </Col>
+                  </Row>
                   <Row style={{ marginInline: 20, }}>
                     <Col span={8}>
                       <div>合约</div>

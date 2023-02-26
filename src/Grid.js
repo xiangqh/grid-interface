@@ -3,7 +3,6 @@ import { Button, Space, Form, Slider, Row, Col, Divider, Card, InputNumber, List
 import { CloseSquareOutlined } from '@ant-design/icons';
 // import type { SliderMarks } from 'antd/es/slider';
 import axios from 'axios';
-import cookie from 'react-cookies';
 import moment from 'moment';
 
 export default function Grid({ gridType, grid, position, orders }) {
@@ -25,7 +24,7 @@ export default function Grid({ gridType, grid, position, orders }) {
 
             const marks = {};
             const values = [0];
-            if(grid) {
+            if (grid) {
                 const span = 80 / grid.gridNum;
                 const spanPrice = (grid.topPrice - grid.buyPrice) / grid.gridNum;
                 for (var i = 0; i <= grid.gridNum; i++) {
@@ -37,7 +36,7 @@ export default function Grid({ gridType, grid, position, orders }) {
                         label: grid.topPrice - spanPrice * i
                     };
                 }
-                marks[100] =  {
+                marks[100] = {
                     style: {
                         color: '#f50',
                     },
@@ -58,7 +57,7 @@ export default function Grid({ gridType, grid, position, orders }) {
                         {gridType == 'long' ? "开多" : "开空"}
                     </Col>
                     <Col span={4}>
-                        {grid?.status}
+                        &nbsp;{grid?.status && grid?.status.slice(0, 1)}
                     </Col>
                     <Col span={18}>
                         <Space size={8} style={{ float: 'right' }}>
@@ -70,7 +69,7 @@ export default function Grid({ gridType, grid, position, orders }) {
                                 grid.totalSize = totalSize;
                                 grid.status = "STOPED";
                                 axios.post(`${process.env.REACT_APP_BASE_PATH}/futures/saveGrid`, grid, {
-                                    headers: { sessionID: cookie.load("sessionID") }
+                                    headers: { sessionID: localStorage.getItem("sessionID") }
                                 }).then(function (response) {
                                     console.log(response);
                                     message.info("SUCCESS");
@@ -87,7 +86,7 @@ export default function Grid({ gridType, grid, position, orders }) {
                                 grid.totalSize = totalSize;
                                 grid.status = 'COMPLETED';
                                 axios.post(`${process.env.REACT_APP_BASE_PATH}/futures/saveGrid`, grid, {
-                                    headers: { sessionID: cookie.load("sessionID") }
+                                    headers: { sessionID: localStorage.getItem("sessionID") }
                                 }).then(function (response) {
                                     console.log(response);
                                     message.info("SUCCESS");
@@ -167,89 +166,69 @@ export default function Grid({ gridType, grid, position, orders }) {
                 <Divider />
                 <div>
                     <Space direction="vertical" size="middle" style={{ display: 'flex' }}>
-                        <Row>
-                            {/* <Col span={8}><span >合约仓位:</span><span> {position?.size}</span>
-                            </Col> */}
-                            <Col span={16}>
-                                <div>
-                                <span>仓位:</span><span> {position?.size}</span>
-                                <Slider range marks={marks} value={[0, position?.size * 80 / grid?.totalSize]} />
-                                </div>
-                                
-                            </Col>
-                            <Col span={8} style={{ textAlign: 'right' }}>
-                                <Button disabled={position?.size == 0} type="primary" onClick={() => {
-                                    axios.post(`${process.env.REACT_APP_BASE_PATH}/futures/closing/${grid.contract}?autoSize=0`, null, {
-                                        headers: { sessionID: cookie.load("sessionID") }
-                                    }).then(function (response) {
-                                        console.log(response);
-                                        message.info("SUCCESS");
-                                    }).catch(function (error) {
-                                        console.log(error);
-                                    });
+                        <div style={{ textAlign: 'right' }}>
+                            <Button disabled={position?.size == 0} type="primary" onClick={() => {
+                                axios.post(`${process.env.REACT_APP_BASE_PATH}/futures/closing/${grid.contract}?autoSize=0`, null, {
+                                    headers: { sessionID: localStorage.getItem("sessionID") }
+                                }).then(function (response) {
+                                    console.log(response);
+                                    message.info("SUCCESS");
+                                }).catch(function (error) {
+                                    console.log(error);
+                                });
 
-                                }}>平仓</Button>
-                            </Col>
-                        </Row>
+                            }}>平仓</Button>
+                        </div>
+                        <div>
+                            <span>仓位:</span><span> {position?.size}</span>
+                            {
+                                grid?.totalSize != 0 && <Slider range marks={marks} value={[0, position?.size * 80 / grid?.totalSize]} />
+                            }
+                            
+                        </div>
 
                         <List
-                            header={<div>
-                                <Row>
-                                    <Col span={8}><span>订单 ID</span>
-                                    </Col>
-                                    <Col span={4}><span>价格</span>
-                                    </Col>
-                                    <Col span={2}>
-                                        <span>交易数量</span>
-                                    </Col>
-                                    <Col span={2}>
-                                        <span>未成交数量</span>
-                                    </Col>
-                                    <Col span={8}>
-                                        <span>订单创建时间</span>
-                                    </Col>
-
-                                </Row>
-                            </div>}
-                            bordered
                             dataSource={orders ? orders : []}
                             renderItem={(item) => (
                                 <List.Item>
-                                    <Row gutter={[16, 16]} style={{ width: '100%' }}>
-                                        <Col span={8}>
-                                            <div>
-                                                <a onClick={() => {
-                                                    message.warning({
-                                                        content: "确定",
-                                                        duration: 3,
-                                                        onClick: () => {
-                                                            message.destroy();
-                                                            axios.post(`${process.env.REACT_APP_BASE_PATH}/futures/cancelOrder/${item.id}`, null, {
-                                                                headers: { sessionID: cookie.load("sessionID") }
-                                                            }).then(function (response) {
-                                                                message.info("SUCCESS");
-                                                                window.location.reload();
-                                                            }).catch(function (error) {
-                                                                console.log(error);
-                                                            });
-                                                        }
-                                                    })
-                                                }}>{item.id}<CloseSquareOutlined /></a>
-                                            </div>
-                                        </Col>
-                                        <Col span={4}>
-                                            <div>{item.price}</div>
-                                        </Col>
-                                        <Col span={2}>
-                                            <div>{item.size}</div>
-                                        </Col>
-                                        <Col span={2}>
-                                            <div>{item.left}</div>
-                                        </Col>
-                                        <Col span={8}>
-                                            <div>{moment.unix(item.createTime).format().slice(0, 19)}</div>
-                                        </Col>
-                                    </Row>
+                                    <Card title={<div>
+                                        <div>ID {item.id}</div>
+                                        <div style={{ fontSize: 12, fontWeight:200}}>{moment.unix(item.createTime).format().slice(0, 19)}</div>
+                                        
+                                    </div>} extra={<a onClick={() => {
+                                        message.warning({
+                                            content: "确定",
+                                            duration: 3,
+                                            onClick: () => {
+                                                message.destroy();
+                                                axios.post(`${process.env.REACT_APP_BASE_PATH}/futures/cancelOrder/${item.id}`, null, {
+                                                    headers: { sessionID: localStorage.getItem("sessionID") }
+                                                }).then(function (response) {
+                                                    message.info("SUCCESS");
+                                                    window.location.reload();
+                                                }).catch(function (error) {
+                                                    console.log(error);
+                                                });
+                                            }
+                                        })
+                                    }}><CloseSquareOutlined /></a>} style={{ width: '100%' }}>
+                                        <Row>
+                                            <Col span={11}>
+                                                <div>价格: {item.price}</div>
+                                            </Col>
+                                            <Col span={6}>
+                                                <div>数量: {item.size}</div>
+                                            </Col>
+                                            <Col span={7}>
+                                                <div>未成交: {item.left}</div>
+                                            </Col>
+                                        </Row>
+                                        <div>
+                                            
+                                        </div>
+                                    </Card>
+
+
                                 </List.Item>
                             )}
                         />
