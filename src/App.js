@@ -34,10 +34,13 @@ function Home() {
 
   const [longOrders, setLongOrders] = useState(null);
   const [shortOrders, setShortOrders] = useState(null);
+ 
 
   const [session, setSession] = useState(localStorage.getItem('sessionID'));
 
-  const contractName = params.token ? `${params.token}_USDT` : "BTC_USDT";
+  const name = params.token ? `${params.token}_USDT` : "BTC_USDT";
+
+  const [contractName, setContractName] = useState(name);
 
   const fetchDate = (path, contract, callback) => {
     axios.get(`${process.env.REACT_APP_BASE_PATH}/futures/${path}/` + contractName, {
@@ -138,12 +141,13 @@ function Home() {
     return () => {
       clearInterval(timer);
     };
-  }, []);
+  }, [contractName]);
 
   const items = [{
     key: '1',
     label: (
       <a onClick={()=>{
+        setContractName("BTC_USDT");
         window.location.href = "./#/BTC";
       }}>
         BTC
@@ -154,6 +158,7 @@ function Home() {
     key: '2',
     label: (
       <a onClick={()=>{
+        setContractName("ETH_USDT");
         window.location.href = "./#/ETH";
       }}>
         ETH
