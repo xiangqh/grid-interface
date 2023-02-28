@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Space, Form, Slider, Row, Col, Divider, Card, InputNumber, List, message } from 'antd';
+import { useNavigate } from 'react-router-dom';
 import { CloseSquareOutlined } from '@ant-design/icons';
-// import type { SliderMarks } from 'antd/es/slider';
 import axios from 'axios';
 import moment from 'moment';
+
 
 export default function Grid({ gridType, grid, position, orders }) {
     const [topPrice, setTopPrice] = useState(0);
@@ -11,8 +12,9 @@ export default function Grid({ gridType, grid, position, orders }) {
     const [closePrice, setClosePrice] = useState(0);
     const [totalSize, setTotalSize] = useState(0);
     const [gridNum, setGridNum] = useState(0);
-
     const [marks, setMarks] = useState({});
+
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (grid) {
@@ -91,7 +93,10 @@ export default function Grid({ gridType, grid, position, orders }) {
                                 }).then(function (response) {
                                     console.log(response);
                                     message.info("SUCCESS");
-                                    window.location.reload();
+                                    if(!grid.id) {
+                                        navigate(`/${grid.contract.split('_')[0]}`);
+                                        window.location.reload();
+                                    }
                                 }).catch(function (error) {
                                     console.log(error);
                                     message.error(error);

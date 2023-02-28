@@ -6,6 +6,7 @@ import axios from 'axios';
 import Grid from './Grid.js';
 import Login from './Login.js';
 
+
 axios.defaults.withCredentials = true;
 
 function App() {
@@ -23,6 +24,7 @@ function App() {
 export default App
 
 function Home() {
+
   const params = useParams();
   const [contract, setContract] = useState(null);
   const [long, setLong] = useState(null);
@@ -37,7 +39,6 @@ function Home() {
 
   const name = params.token ? `${params.token}_USDT` : "BTC_USDT";
   const [contractName, setContractName] = useState(name);
-
   const [tokens, setTokens] = useState([]);
 
   const initGrid = { contract: contractName, topPrice: 0, buyPrice: 0, closePrice: 0, priceRound: 0, totalSize: 0, gridNum: 0 }
