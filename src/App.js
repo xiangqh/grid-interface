@@ -59,6 +59,7 @@ function Home() {
   const init = () => {
 
     fetchDate("getContract", contractName, function (response) {
+      console.log(response.data);
       setContract(response.data);
     });
     fetchDate("openOrders", contractName, function (response) {
@@ -194,8 +195,8 @@ function Home() {
                       <div>{contract?.lastPrice}</div>
                     </Col>
                     <Col span={8}>
-                      <div>委托价格最小单位</div>
-                      <div>{contract?.orderPriceRound}</div>
+                      <div>最小单位</div>
+                      <div>{contract?.orderPriceRound}/{contract?.quantoMultiplier}</div>
                     </Col>
                   </Row>
                   <Divider />
