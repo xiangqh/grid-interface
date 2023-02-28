@@ -1,13 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Space, Form, Input, Row, Col, Divider, Card, Checkbox, message } from 'antd';
 import axios from 'axios';
-// import cookie from 'react-cookies';
-
 import chacha20 from './Chacha20.js';
 
 export default function Login() {
-
-
     const [signup, setSignup] = useState(false);
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
@@ -138,7 +134,6 @@ export default function Login() {
                                 password: password,
                             }).then(response => {
                                 if (response.data.ret) {
-                                    // cookie.save("sessionID", response.data.ret, { maxAge: 3600 * 24 * 7 });
                                     localStorage.setItem("sessionID", response.data.ret);
                                     window.location.reload();
                                 } else {

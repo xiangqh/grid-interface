@@ -3,7 +3,6 @@ import { Affix, Button, Space, Typography, Row, Col, Divider, Dropdown, Breadcru
 import { BrowserRouter, HashRouter, Routes, Router, Route, Switch, useParams } from 'react-router-dom'
 import { DownOutlined } from '@ant-design/icons';
 import axios from 'axios';
-// import cookie from 'react-cookies';
 import Grid from './Grid.js';
 import Login from './Login.js';
 
@@ -13,9 +12,9 @@ function App() {
   return (
     <div className="App">
       <Routes>
-        <Route index path="/" element={<Home />} />
-        <Route exact path="/interface/:token" element={<Home />} />
-        <Route exact path="/:token" element={<Home />} />
+        <Route index path="/" element={<Home/>} />
+        <Route exact path="/interface/:token" element={<Home/>} />
+        <Route exact path="/:token" element={<Home/>} />
       </Routes>
     </div>
   )
@@ -34,15 +33,16 @@ function Home() {
 
   const [longOrders, setLongOrders] = useState(null);
   const [shortOrders, setShortOrders] = useState(null);
- 
-
   const [session, setSession] = useState(localStorage.getItem('sessionID'));
 
   const name = params.token ? `${params.token}_USDT` : "BTC_USDT";
-
   const [contractName, setContractName] = useState(name);
 
-  const fetchDate = (path, contract, callback) => {
+  const [tokens, setTokens] = useState([]);
+
+  const initGrid = { contract: contractName, topPrice: 0, buyPrice: 0, closePrice: 0, priceRound: 0, totalSize: 0, gridNum: 0 }
+
+  const fetchDate = (path, contractName, callback) => {
     axios.get(`${process.env.REACT_APP_BASE_PATH}/futures/${path}/` + contractName, {
       headers: { sessionID: session }
     }).then(function (response) {
@@ -102,33 +102,37 @@ function Home() {
   }
   useEffect(() => {
     init();
+    fetchDate('tokens', '', function (response) {
+      const list = [];
+      response.data.forEach((each, index) => {
+        console.log(each, index);
+        list.push({
+          key: `${index}`,
+          label:
+           (
+            <a onClick={()=>{
+              setContractName(`${each.token}_USDT`);
+              // window.location.href = `./#/${each.token}`;
+            }}>
+             {each.token}
+            </a>
+          )
+        });
+      });
+      setTokens(list);
+    });
+
     fetchDate("grids", contractName, function (response) {
       if (response.data[0] != null) {
         setLongGrid(response.data[0]);
       } else {
-        setLongGrid({
-          contract: contractName,
-          topPrice: 0,
-          buyPrice: 0,
-          closePrice: 0,
-          priceRound: 0,
-          totalSize: 0,
-          gridNum: 0,
-        });
+        setLongGrid(initGrid);
       }
 
       if (response.data[1] != null) {
         setShortGrid(response.data[1]);
       } else {
-        setShortGrid({
-          contract: contractName,
-          topPrice: 0,
-          buyPrice: 0,
-          closePrice: 0,
-          priceRound: 0,
-          totalSize: 0,
-          gridNum: 0,
-        });
+        setShortGrid(initGrid);
       }
     });
 
@@ -143,30 +147,6 @@ function Home() {
     };
   }, [contractName]);
 
-  const items = [{
-    key: '1',
-    label: (
-      <a onClick={()=>{
-        setContractName("BTC_USDT");
-        window.location.href = "./#/BTC";
-      }}>
-        BTC
-      </a>
-    )
-  },
-  {
-    key: '2',
-    label: (
-      <a onClick={()=>{
-        setContractName("ETH_USDT");
-        window.location.href = "./#/ETH";
-      }}>
-        ETH
-      </a>
-    )
-  },];
-
-
   return (
     <div style={{ marginTop: 20, height: '100%' }}>
       {
@@ -177,7 +157,7 @@ function Home() {
                 <div style={{ paddingTop: 10, backgroundColor: "#FFFFFF" }}>
                   <Row style={{ marginInline: 20 }}>
                     <Col span={12} style={{ marginBottom: 20 }}>
-                      <Dropdown menu={{ items }}>
+                      <Dropdown menu={{items:tokens}}>
                         <a onClick={(e) => e.preventDefault()}>
                           <Space>
                             切换
@@ -187,19 +167,19 @@ function Home() {
                       </Dropdown>
                     </Col>
                     <Col span={12} style={{ textAlign: 'right' }}>
-                      <Button  onClick={() => {
-                          axios.post(`${process.env.REACT_APP_BASE_PATH}/accounts/logout`, null, {
-                            headers: { sessionID: session }
-                          }).then(function (response) {
-                            if (response.data.code == 200) {
-                              // cookie.remove("sessionID");
-                              localStorage.removeItem("sessionID");
-                              setSession(null);
-                            }
-                          }).catch(function (error) {
+                      <Button onClick={() => {
+                        axios.post(`${process.env.REACT_APP_BASE_PATH}/accounts/logout`, null, {
+                          headers: { sessionID: session }
+                        }).then(function (response) {
+                          if (response.data.code == 200) {
+                            // cookie.remove("sessionID");
+                            localStorage.removeItem("sessionID");
+                            setSession(null);
+                          }
+                        }).catch(function (error) {
 
-                          });
-                        }}>
+                        });
+                      }}>
                         Logout
                       </Button>
                     </Col>

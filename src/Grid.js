@@ -74,6 +74,7 @@ export default function Grid({ gridType, grid, position, orders }) {
                                     console.log(response);
                                     message.info("SUCCESS");
                                 }).catch(function (error) {
+                                    message.error(error);
                                     console.log(error);
                                 });
                             }}>停止</Button>
@@ -90,8 +91,10 @@ export default function Grid({ gridType, grid, position, orders }) {
                                 }).then(function (response) {
                                     console.log(response);
                                     message.info("SUCCESS");
+                                    window.location.reload();
                                 }).catch(function (error) {
                                     console.log(error);
+                                    message.error(error);
                                 });
                             }}>保存</Button>
                         </Space>
