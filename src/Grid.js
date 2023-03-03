@@ -213,6 +213,7 @@ export default function Grid({ gridType, grid, position, orders }) {
                                                     headers: { sessionID: localStorage.getItem("sessionID") }
                                                 }).then(function (response) {
                                                     message.info("SUCCESS");
+                                                    navigate(`/${grid.contract.split('_')[0]}`);
                                                     window.location.reload();
                                                 }).catch(function (error) {
                                                     console.log(error);
