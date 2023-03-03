@@ -176,7 +176,7 @@ export default function Grid({ gridType, grid, position, orders }) {
                     <Space direction="vertical" size="middle" style={{ display: 'flex' }}>
                         <div style={{ textAlign: 'right' }}>
                             <Button disabled={position?.size == 0} type="primary" onClick={() => {
-                                axios.post(`${process.env.REACT_APP_BASE_PATH}/futures/closing/${grid.contract}?autoSize=0`, null, {
+                                axios.post(`${process.env.REACT_APP_BASE_PATH}/futures/closing/${grid.contract}?autoSize=${gridType == 'long'?0:1}`, null, {
                                     headers: { sessionID: localStorage.getItem("sessionID") }
                                 }).then(function (response) {
                                     console.log(response);
