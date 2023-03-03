@@ -93,7 +93,7 @@ export default function Grid({ gridType, grid, position, orders }) {
                                 }).then(function (response) {
                                     console.log(response);
                                     message.info("SUCCESS");
-                                    if(!grid.id) {
+                                    if (!grid.id) {
                                         navigate(`/${grid.contract.split('_')[0]}`);
                                         window.location.reload();
                                     }
@@ -176,7 +176,7 @@ export default function Grid({ gridType, grid, position, orders }) {
                     <Space direction="vertical" size="middle" style={{ display: 'flex' }}>
                         <div style={{ textAlign: 'right' }}>
                             <Button disabled={position?.size == 0} type="primary" onClick={() => {
-                                axios.post(`${process.env.REACT_APP_BASE_PATH}/futures/closing/${grid.contract}?autoSize=${gridType == 'long'?0:1}`, null, {
+                                axios.post(`${process.env.REACT_APP_BASE_PATH}/futures/closing/${grid.contract}?autoSize=${gridType == 'long' ? 0 : 1}`, null, {
                                     headers: { sessionID: localStorage.getItem("sessionID") }
                                 }).then(function (response) {
                                     console.log(response);
@@ -192,7 +192,7 @@ export default function Grid({ gridType, grid, position, orders }) {
                             {
                                 grid?.totalSize != 0 && <Slider range marks={marks} value={[0, position?.size * 80 / grid?.totalSize]} />
                             }
-                            
+
                         </div>
 
                         <List
@@ -201,8 +201,8 @@ export default function Grid({ gridType, grid, position, orders }) {
                                 <List.Item>
                                     <Card title={<div>
                                         <div>ID {item.id}</div>
-                                        <div style={{ fontSize: 12, fontWeight:200}}>{moment.unix(item.createTime).format().slice(0, 19)}</div>
-                                        
+                                        <div style={{ fontSize: 12, fontWeight: 200 }}>{moment.unix(item.createTime).format().slice(0, 19)}</div>
+
                                     </div>} extra={<a onClick={() => {
                                         message.warning({
                                             content: "确定",
@@ -220,30 +220,26 @@ export default function Grid({ gridType, grid, position, orders }) {
                                                 });
                                             }
                                         })
-                                    }}><CloseSquareOutlined /></a>} style={{ width: '100%' }}>
+                                    }}><CloseSquareOutlined /></a>} style={{ width: '100%' }}
+                                    bodyStyle={{padding:12}}>
                                         <Row>
-                                            <Col span={11}>
+                                            <Col span={10}>
                                                 <div>价格: {item.price}</div>
                                             </Col>
-                                            <Col span={6}>
+                                            <Col span={7}>
                                                 <div>数量: {item.size}</div>
                                             </Col>
                                             <Col span={7}>
                                                 <div>未成交: {item.left}</div>
                                             </Col>
                                         </Row>
-                                        <div>
-                                            
-                                        </div>
                                     </Card>
 
 
                                 </List.Item>
                             )}
                         />
-
                     </Space>
-
                 </div>
             </div>
         </Card>
