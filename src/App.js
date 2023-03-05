@@ -60,7 +60,7 @@ function Home() {
   const init = () => {
 
     fetchDate("getContract", contractName, function (response) {
-      console.log(response.data);
+      console.log(contractName, response.data);
       setContract(response.data);
     });
     fetchDate("openOrders", contractName, function (response) {
@@ -205,8 +205,8 @@ function Home() {
               </Affix>
             </Space>
             <Space direction="vertical" size="middle" style={{ display: 'flex', marginInline: 20, }}>
-              <Grid gridType="long" grid={longGrid} position={long} orders={longOrders} />
-              <Grid gridType="short" grid={shortGrid} position={short} orders={shortOrders} />
+              <Grid gridType="long" grid={longGrid} position={long} orders={longOrders} fixedLen={contract?.orderPriceRound.length - 2}/>
+              <Grid gridType="short" grid={shortGrid} position={short} orders={shortOrders} fixedLen={contract?.orderPriceRound.length - 2}/>
             </Space>
           </div> : <Login />
       }

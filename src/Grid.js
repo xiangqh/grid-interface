@@ -6,12 +6,13 @@ import axios from 'axios';
 import moment from 'moment';
 
 
-export default function Grid({ gridType, grid, position, orders }) {
+export default function Grid({ gridType, grid, position, orders, fixedLen}) {
     const [topPrice, setTopPrice] = useState(0);
     const [buyPrice, setBuyPrice] = useState(0);
     const [closePrice, setClosePrice] = useState(0);
     const [totalSize, setTotalSize] = useState(0);
     const [gridNum, setGridNum] = useState(0);
+    const [priceRate, setPriceRate] = useState(0);
     const [marks, setMarks] = useState({});
 
     const navigate = useNavigate();
@@ -23,6 +24,7 @@ export default function Grid({ gridType, grid, position, orders }) {
             setClosePrice(grid.closePrice);
             setTotalSize(grid.totalSize);
             setGridNum(grid.gridNum);
+            setPriceRate(((Number(grid.topPrice) - Number(grid.buyPrice)) / grid.gridNum / Number(grid.buyPrice)  * 100).toFixed())
 
             const marks = {};
             const values = [0];
@@ -35,7 +37,7 @@ export default function Grid({ gridType, grid, position, orders }) {
                             // color: '#f50',
 
                         },
-                        label: grid.topPrice - spanPrice * i
+                        label: parseFloat((grid.topPrice - spanPrice * i).toFixed(fixedLen))
                     };
                 }
                 marks[100] = {
@@ -163,12 +165,20 @@ export default function Grid({ gridType, grid, position, orders }) {
                         </Form.Item>
                     </Col>
                     <Col span={8} style={{ textAlign: 'right' }} >
-                        <Form.Item>
-                            <div>
-
-                            </div>
+                        <Form.Item
+                            label="grid price rate"
+                            rules={[{ required: true, message: 'Please input your grid num!' }]}
+                        >
+                            <InputNumber style={{ width: '100%' }} defaultValue={priceRate} onChange={(value) => {
+                                // setTopPrice(buyPrice + parseFloat());
+                                const _buyPrice = Number(buyPrice);
+                                const _closePrice = parseFloat((_buyPrice - _buyPrice * Number(value) / 100).toFixed(fixedLen));
+                                const _topPrice =  parseFloat((_buyPrice + _buyPrice * gridNum * Number(value) / 100).toFixed(fixedLen));
+        
+                                setTopPrice(_topPrice);
+                                setClosePrice(_closePrice);
+                            }} />
                         </Form.Item>
-
                     </Col>
                 </Row>
                 <Divider />
