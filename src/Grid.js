@@ -18,7 +18,7 @@ export default function Grid({ gridType, grid, position, orders, fixedLen}) {
     const navigate = useNavigate();
 
     useEffect(() => {
-        if (grid) {
+        if (grid && fixedLen != 'NaN') {
             setTopPrice(grid.topPrice);
             setBuyPrice(grid.buyPrice);
             setClosePrice(grid.closePrice);
@@ -50,7 +50,7 @@ export default function Grid({ gridType, grid, position, orders, fixedLen}) {
                 setMarks(marks);
             }
         }
-    }, [grid]);
+    }, [grid, fixedLen]);
 
     return (
         <Card

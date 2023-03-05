@@ -60,7 +60,6 @@ function Home() {
   const init = () => {
 
     fetchDate("getContract", contractName, function (response) {
-      console.log(contractName, response.data);
       setContract(response.data);
     });
     fetchDate("openOrders", contractName, function (response) {
