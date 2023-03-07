@@ -32,11 +32,14 @@ export default function Grid({ gridType, grid, position, orders, fixedLen}) {
                 const span = 80 / grid.gridNum;
                 const spanPrice = (grid.topPrice - grid.buyPrice) / grid.gridNum;
                 for (var i = 0; i <= grid.gridNum; i++) {
+                    let style = {};
+                    if(i % 2 == 0) {
+                        style = {
+                            transform: 'translate(-50%, -150%)'
+                        }
+                    }
                     marks[span * i] = {
-                        style: {
-                            // color: '#f50',
-
-                        },
+                        style: style,
                         label: parseFloat((grid.topPrice - spanPrice * i).toFixed(fixedLen))
                     };
                 }
@@ -208,9 +211,11 @@ export default function Grid({ gridType, grid, position, orders, fixedLen}) {
                         <div>
                             <span>仓位:</span><span> {position?.size}</span>
                             {
-                                grid?.totalSize != 0 && <Slider range marks={marks} value={[0, position?.size * 80 / grid?.totalSize]} />
+                                grid?.totalSize != 0 && 
+                                <div style={{marginTop: '30px'}}>
+                                    <Slider  range marks={marks} value={[0, position?.size * 80 / grid?.totalSize]} />
+                                </div>
                             }
-
                         </div>
 
                         <List
