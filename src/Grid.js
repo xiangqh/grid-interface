@@ -65,23 +65,31 @@ export default function Grid({ gridType, grid, position, orders, fixedLen}) {
                     </Col>
                     <Col span={18}>
                         <Space size={8} style={{ float: 'right' }}>
-                            <Button disabled={!grid || grid?.status == 'STOPED'} type="primary" onClick={() => {
+                            <Button disabled={!grid || !grid.id} type="primary" onClick={() => {
                                 grid.topPrice = topPrice;
                                 grid.buyPrice = buyPrice;
                                 grid.closePrice = closePrice;
                                 grid.gridNum = gridNum;
                                 grid.totalSize = totalSize;
-                                grid.status = "STOPED";
+                                if(grid.status == "STOPED") {
+                                    grid.status = 'COMPLETED';
+                                } else {
+                                    grid.status = "STOPED";
+                                }
                                 axios.post(`${process.env.REACT_APP_BASE_PATH}/futures/saveGrid`, grid, {
                                     headers: { sessionID: localStorage.getItem("sessionID") }
                                 }).then(function (response) {
                                     console.log(response);
                                     message.info("SUCCESS");
+                                    if (!grid.id) {
+                                        navigate(`/${grid.contract.split('_')[0]}`);
+                                        window.location.reload();
+                                    }
                                 }).catch(function (error) {
                                     message.error(error);
                                     console.log(error);
                                 });
-                            }}>停止</Button>
+                            }}>{(grid?.status == 'STOPED')?'开始':'停止'}</Button>
 
                             <Button type="primary" onClick={() => {
                                 grid.topPrice = topPrice;
@@ -89,7 +97,7 @@ export default function Grid({ gridType, grid, position, orders, fixedLen}) {
                                 grid.closePrice = closePrice;
                                 grid.gridNum = gridNum;
                                 grid.totalSize = totalSize;
-                                grid.status = 'COMPLETED';
+                               
                                 axios.post(`${process.env.REACT_APP_BASE_PATH}/futures/saveGrid`, grid, {
                                     headers: { sessionID: localStorage.getItem("sessionID") }
                                 }).then(function (response) {
